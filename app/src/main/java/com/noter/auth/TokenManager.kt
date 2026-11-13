@@ -69,6 +69,24 @@ class TokenManager(context: Context) {
         return getAccessToken(provider) != null
     }
 
+    fun saveOAuthState(state: String) {
+        encryptedPrefs.edit().apply {
+            putString("oauth_state", state)
+            apply()
+        }
+    }
+
+    fun getOAuthState(): String? {
+        return encryptedPrefs.getString("oauth_state", null)
+    }
+
+    fun clearOAuthState() {
+        encryptedPrefs.edit().apply {
+            remove("oauth_state")
+            apply()
+        }
+    }
+
     companion object {
         private const val PREFS_NAME = "noter_encrypted_prefs"
     }

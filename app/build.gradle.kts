@@ -9,6 +9,13 @@ android {
     namespace = "com.noter"
     compileSdk = 35
 
+    // Load Dropbox configuration
+    val dropboxPropertiesFile = rootProject.file("gradle.dropbox.properties")
+    val dropboxProperties = java.util.Properties()
+    if (dropboxPropertiesFile.exists()) {
+        dropboxProperties.load(dropboxPropertiesFile.inputStream())
+    }
+
     defaultConfig {
         applicationId = "com.noter"
         minSdk = 30
@@ -20,6 +27,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Add Dropbox credentials as build config fields
+        buildConfigField("String", "DROPBOX_APP_KEY", "\"${dropboxProperties.getProperty("DROPBOX_APP_KEY", "YOUR_APP_KEY")}\"")
+        buildConfigField("String", "DROPBOX_APP_SECRET", "\"${dropboxProperties.getProperty("DROPBOX_APP_SECRET", "YOUR_APP_SECRET")}\"")
     }
 
     buildTypes {
@@ -43,6 +54,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -58,69 +70,55 @@ android {
 
 dependencies {
     // Core Android
-    implementation("androidx.core:core:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    
+    implementation("androidx.appcompat:appcompat:1.6.1")
+
     // Jetpack Compose
-    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-core")
-    implementation("androidx.compose.material:material-icons-extended")
-    
-    // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.5")
-    
-    // Database - Room
+    implementation("androidx.compose.ui:ui:1.6.0")
+    implementation("androidx.compose.ui:ui-graphics:1.6.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
+    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.runtime:runtime:1.6.0")
+    implementation("androidx.compose.foundation:foundation:1.6.0")
+
+    // Navigation & Compose Integration
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.compose.ui:ui-util:1.6.0")
+
+    // Hilt (Dependency Injection)
+    implementation("com.google.dagger:hilt-android:2.48")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    kapt("com.google.dagger:hilt-compiler:2.48")
+
+    // Dropbox SDK
+    implementation("com.dropbox.core:dropbox-core-sdk:6.0.0")
+
+    // Room Database
     implementation("androidx.room:room-runtime:2.6.0")
     implementation("androidx.room:room-ktx:2.6.0")
     kapt("androidx.room:room-compiler:2.6.0")
-    
+
     // Security
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    
-    // Cloud SDKs
-    implementation("com.dropbox.core:dropbox-core-sdk:6.0.0")
-    implementation("com.google.api-client:google-api-client-android:1.35.2")
-    implementation("com.google.apis:google-api-services-drive:v3-rev20240521-2.0.0")
-    
-    // Async/Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    
-    // Dependency Injection - Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-    
-    // JSON serialization
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.json:json:20231013")
-    
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
     // Logging
     implementation("com.jakewharton.timber:timber:5.0.1")
-    
-    // Networking
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    
+
+    // JSON parsing (simple JSON parsing)
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testImplementation("org.mockito:mockito-core:5.5.1")
-    
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-}
-
-kapt {
-    correctErrorTypes = true
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
 }

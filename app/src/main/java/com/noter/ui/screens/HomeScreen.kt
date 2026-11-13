@@ -19,7 +19,8 @@ import com.noter.viewmodel.HomeUiState
 fun AuthenticationScreen(
     onConnectDropbox: () -> Unit,
     onConnectGoogleDrive: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -28,34 +29,45 @@ fun AuthenticationScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Welcome to Noter",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
+        if (isLoading) {
+            CircularProgressIndicator()
+            Text(
+                "Connecting to Dropbox...",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        } else {
+            Text(
+                text = "Welcome to Noter",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
 
-        Text(
-            text = "Connect your cloud storage to read and annotate your music notes",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
+            Text(
+                text = "Connect your cloud storage to read and annotate your music notes",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
 
-        Button(
-            onClick = onConnectDropbox,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Text("Connect Dropbox")
-        }
+            Button(
+                onClick = onConnectDropbox,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                enabled = !isLoading
+            ) {
+                Text("Connect Dropbox")
+            }
 
-        Button(
-            onClick = onConnectGoogleDrive,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Text("Connect Google Drive")
+            Button(
+                onClick = onConnectGoogleDrive,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                enabled = !isLoading
+            ) {
+                Text("Connect Google Drive")
+            }
         }
     }
 }
@@ -127,7 +139,7 @@ fun HomeScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    "Your PDFs",
+                    "Your PDFs (${uiState.pdfs.size})",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
