@@ -1,0 +1,42 @@
+# Gradle files
+.gradle/
+build/
+*.apk
+*.ap_
+*.aab
+
+# Local configuration file
+local.properties
+
+# IDE/Editor
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.DS_Store
+
+# Android
+bin/
+gen/
+.classpath
+.project
+.settings/
+*.class
+*.jar
+
+# Log files
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# Build output
+target/
+.gradle
